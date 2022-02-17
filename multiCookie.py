@@ -59,7 +59,7 @@ def getCookie(identifier, password, credentialId):
 
     service = Service(ChromeDriverManager().install())
 
-    driver = webdriver.Chrome(service=service, options=options, desired_capabilities=capabilities)
+    driver = webdriver.Chrome(service=service, options=options)
 
     driver.get(args.u)
     sleep(args.sleep)
