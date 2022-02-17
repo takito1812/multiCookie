@@ -5,7 +5,6 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.proxy import Proxy, ProxyType
 from selenium.common.exceptions import NoSuchElementException
 from concurrent.futures import ThreadPoolExecutor
 
@@ -53,21 +52,15 @@ def getCookie(identifier, password, credentialId):
     options = webdriver.ChromeOptions()
     options.add_argument('headless')
     options.add_argument('ignore-certificate-errors')
+    options.add_argument('disable-extensions')
 
-    if args.proxy is None:
-        capabilities = None
-    else:
-        prox = Proxy()
-        prox.proxy_type = ProxyType.MANUAL
-        prox.http_proxy = args.proxy
-        prox.ssl_proxy = args.proxy
-
-        capabilities = webdriver.DesiredCapabilities.CHROME
-        prox.add_to_capabilities(capabilities)
+    if args.proxy is not None:
+        options.add_argument('--proxy-server={}'.format(args.proxy))
 
     service = Service(ChromeDriverManager().install())
 
     driver = webdriver.Chrome(service=service, options=options, desired_capabilities=capabilities)
+
     driver.get(args.u)
     sleep(args.sleep)
 
