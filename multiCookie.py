@@ -15,13 +15,13 @@ class customParser(argparse.ArgumentParser):
         sys.exit(2)
 parser = customParser(prog='multiCookie', description='Python 3 script to get session cookies given a credentials file')
 parser.add_argument('u', help='Login URL')
-parser.add_argument('i', help='CSS id selector of the identifier input (username/email)')
-parser.add_argument('p', help='CSS id selector of the password input')
-parser.add_argument('b', help='CSS id selector of the button to submit the form')
+parser.add_argument('i', help='XPath of the identifier input (username/email)')
+parser.add_argument('p', help='XPath of the password input')
+parser.add_argument('b', help='XPath of the button to submit the form')
 parser.add_argument('c', help='Name of the session cookie(s) to obtain (if there are several separate by commas: "cookie1,cookie2")')
 parser.add_argument('f', help='File with creds, format should be "email/username password" (delimiter is the space and one cred per line)')
 parser.add_argument('-t', '--threads', help='Number of threads to open browsers with Selenium (by default, 4)', type=int, default=4)
-parser.add_argument('-s', '--sleep', help='Seconds to sleep between relevant requests (by default, 3)', type=int, default=3)
+parser.add_argument('-s', '--sleep', help='Seconds to sleep between relevant requests (by default, 3)', type=int, default='3')
 parser.add_argument('-p', '--proxy', help='Send traffic through a proxy (by default, Burp)', nargs='?', default=None, const='127.0.0.1:8080')
 args = parser.parse_args()
 
@@ -64,11 +64,11 @@ def getCookie(identifier, password, credentialId):
     driver.get(args.u)
     sleep(args.sleep)
 
-    def findElement(argumentName, argumentVariable):
+    def findElement(element, xpath):
         try:
-            return driver.find_element(By.ID, argumentVariable)
+            return driver.find_element(By.XPATH, xpath)
         except NoSuchElementException:
-            print('[{}] {} not found'.format(credentialId, argumentName))
+            print('[{}] {} not found. Please, check XPath'.format(credentialId, element))
             exit(1)
 
     identifierInput = findElement('Identifier input', args.i)
